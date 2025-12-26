@@ -1,11 +1,11 @@
-# EvalCA - AI-Powered CA Learning Platform
+# Lekha - AI-Powered CA Learning Platform
 ## Project Plan & Requirements
 
 ---
 
 ## 🎯 Project Overview
 
-**EvalCA** is an AI-powered, practice-first learning platform designed specifically for Chartered Accountancy (CA) students. The platform enables students to practice questions in multiple modes (concept-wise, chapter-wise, exam-wise) in a real exam-like environment, with AI-powered evaluation and personalized learning paths.
+**Lekha** is an AI-powered, practice-first learning platform designed specifically for Chartered Accountancy (CA) students. The platform enables students to practice questions in multiple modes (concept-wise, chapter-wise, exam-wise) in a real exam-like environment, with AI-powered evaluation and personalized learning paths.
 
 ---
 

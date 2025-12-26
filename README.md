@@ -1,4 +1,4 @@
-# EvalCA - AI-Powered CA Learning Platform
+# Lekha - AI-Powered CA Learning Platform
 
 An AI-powered, practice-first learning platform designed specifically for Chartered Accountancy (CA) students.
 
@@ -84,7 +84,7 @@ The application expects the following backend endpoints:
 ## Project Structure
 
 ```
-evalca-web/
+lekha-web/
 ├── src/
 │   ├── components/
 │   │   ├── FileUpload.jsx       # File upload component
@@ -122,5 +122,5 @@ The app uses Vite for fast development with hot module replacement. Any changes 
 
 ## License
 
-Copyright © 2024 EvalCA
+Copyright © 2024 Lekha
 

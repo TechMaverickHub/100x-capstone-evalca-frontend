@@ -185,7 +185,7 @@ function App() {
     <div className="app">
       <div className="app-container">
         <header className="app-header">
-          <h1 className="app-title">EvalCA</h1>
+          <h1 className="app-title">Lekha</h1>
           <p className="app-subtitle">AI-Powered CA Learning Platform</p>
         </header>
 
@@ -338,7 +338,7 @@ function App() {
         </main>
 
         <footer className="app-footer">
-          <p>© 2024 EvalCA. AI-Powered Learning Platform for CA Students.</p>
+          <p>© 2024 Lekha. AI-Powered Learning Platform for CA Students.</p>
         </footer>
       </div>
     </div>
