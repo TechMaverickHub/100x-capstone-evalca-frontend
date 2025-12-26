@@ -1,6 +1,23 @@
+import { useState, useEffect } from 'react';
 import './OCRResultsDisplay.css';
 
-const OCRResultsDisplay = ({ data, isLoading, type }) => {
+const OCRResultsDisplay = ({ data, isLoading, type, editedText, onTextChange }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [localText, setLocalText] = useState('');
+
+  // Get the current combined text (edited or original from response)
+  // Priority: editedText > data.combined_text > empty string
+  const combinedText = editedText !== undefined && editedText !== null 
+    ? editedText 
+    : (data?.combined_text || '');
+
+  // Sync localText with combinedText when not editing or when data changes
+  useEffect(() => {
+    if (!isEditing) {
+      setLocalText(combinedText);
+    }
+  }, [combinedText, isEditing]);
+
   if (isLoading) {
     return (
       <div className="ocr-results-container">
@@ -15,6 +32,23 @@ const OCRResultsDisplay = ({ data, isLoading, type }) => {
   if (!data) {
     return null;
   }
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setLocalText(combinedText);
+  };
+
+  const handleSave = () => {
+    if (onTextChange) {
+      onTextChange(localText);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setLocalText(combinedText);
+    setIsEditing(false);
+  };
 
   return (
     <div className="ocr-results-container">
@@ -57,9 +91,49 @@ const OCRResultsDisplay = ({ data, isLoading, type }) => {
 
       {data.combined_text && (
         <div className="combined-result">
-          <h4 className="subsection-title">Combined Text</h4>
+          <div className="combined-result-header">
+            <h4 className="subsection-title">Combined Text</h4>
+            {!isEditing ? (
+              <button
+                type="button"
+                className="edit-text-button"
+                onClick={handleEdit}
+                title="Edit combined text"
+              >
+                ✏️ Edit
+              </button>
+            ) : (
+              <div className="edit-actions">
+                <button
+                  type="button"
+                  className="save-text-button"
+                  onClick={handleSave}
+                  title="Save changes"
+                >
+                  💾 Save
+                </button>
+                <button
+                  type="button"
+                  className="cancel-text-button"
+                  onClick={handleCancel}
+                  title="Cancel editing"
+                >
+                  ✕ Cancel
+                </button>
+              </div>
+            )}
+          </div>
           <div className="combined-text-content">
-            <pre className="extracted-text">{data.combined_text}</pre>
+            {isEditing ? (
+              <textarea
+                className="editable-text"
+                value={localText}
+                onChange={(e) => setLocalText(e.target.value)}
+                placeholder="Enter or edit the combined text..."
+              />
+            ) : (
+              <pre className="extracted-text">{combinedText}</pre>
+            )}
           </div>
         </div>
       )}

@@ -13,11 +13,13 @@ function App() {
   const [questionFiles, setQuestionFiles] = useState([]);
   const [questionOCRData, setQuestionOCRData] = useState(null);
   const [isQuestionLoading, setIsQuestionLoading] = useState(false);
+  const [editedQuestionText, setEditedQuestionText] = useState(null);
 
   // Answer state
   const [answerFiles, setAnswerFiles] = useState([]);
   const [answerOCRData, setAnswerOCRData] = useState(null);
   const [isAnswerLoading, setIsAnswerLoading] = useState(false);
+  const [editedAnswerText, setEditedAnswerText] = useState(null);
 
   const [error, setError] = useState(null);
 
@@ -58,6 +60,8 @@ function App() {
       
       if (response.status_code === 200 && response.data) {
         setQuestionOCRData(response.data);
+        // Prefill with combined text from response, but keep it editable
+        setEditedQuestionText(response.data.combined_text || null);
       } else {
         throw new Error('Question OCR failed: Invalid response format');
       }
@@ -94,6 +98,8 @@ function App() {
       
       if (response.status_code === 200 && response.data) {
         setAnswerOCRData(response.data);
+        // Prefill with combined text from response, but keep it editable
+        setEditedAnswerText(response.data.combined_text || null);
       } else {
         throw new Error('Answer OCR failed: Invalid response format');
       }
@@ -174,6 +180,8 @@ function App() {
                   data={questionOCRData}
                   isLoading={isQuestionLoading}
                   type="Question"
+                  editedText={editedQuestionText}
+                  onTextChange={setEditedQuestionText}
                 />
               )}
             </section>
@@ -199,6 +207,8 @@ function App() {
                   data={answerOCRData}
                   isLoading={isAnswerLoading}
                   type="Answer"
+                  editedText={editedAnswerText}
+                  onTextChange={setEditedAnswerText}
                 />
               )}
             </section>

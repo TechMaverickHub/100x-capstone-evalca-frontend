@@ -100,8 +100,89 @@
   border-top: 2px solid #e2e8f0;
 }
 
+.combined-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
 .combined-text-content {
   margin-top: 1rem;
+}
+
+.edit-text-button,
+.save-text-button,
+.cancel-text-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.edit-text-button {
+  background-color: #4299e1;
+  color: white;
+}
+
+.edit-text-button:hover {
+  background-color: #3182ce;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
+}
+
+.save-text-button {
+  background-color: #48bb78;
+  color: white;
+  margin-right: 0.5rem;
+}
+
+.save-text-button:hover {
+  background-color: #38a169;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(72, 187, 120, 0.3);
+}
+
+.cancel-text-button {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.cancel-text-button:hover {
+  background-color: #cbd5e0;
+  transform: translateY(-1px);
+}
+
+.edit-actions {
+  display: flex;
+  align-items: center;
+}
+
+.editable-text {
+  width: 100%;
+  min-height: 200px;
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #2d3748;
+  background-color: #ffffff;
+  border: 2px solid #4299e1;
+  border-radius: 8px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.editable-text:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
 .extracted-text {
@@ -156,6 +237,23 @@
 
   .file-name-badge {
     max-width: 100%;
+  }
+
+  .combined-result-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .edit-actions {
+    width: 100%;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .save-text-button,
+  .cancel-text-button {
+    flex: 1;
+    margin-right: 0;
   }
 }
 
