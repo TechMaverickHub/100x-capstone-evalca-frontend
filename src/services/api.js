@@ -85,4 +85,22 @@ export const performAnswerOCR = async (files) => {
   return response.data;
 };
 
+/**
+ * Evaluate question and answer
+ * @param {string} question - Question text
+ * @param {string} answer - Answer text
+ * @returns {Promise} Evaluation response with marks, verdict, and feedback
+ */
+export const evaluateAnswer = async (question, answer) => {
+  const response = await api.post('/evaluate', {
+    question: question,
+    answer: answer,
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response.data;
+};
 

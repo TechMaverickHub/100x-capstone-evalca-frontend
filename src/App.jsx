@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import MultiFileUpload from './components/MultiFileUpload';
 import OCRResultsDisplay from './components/OCRResultsDisplay';
-import { performQuestionOCR, performAnswerOCR } from './services/api';
+import EvaluationResult from './components/EvaluationResult';
+import { performQuestionOCR, performAnswerOCR, evaluateAnswer } from './services/api';
 import './App.css';
 
 function App() {
   // Step navigation state
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 2;
+  const totalSteps = 3;
 
   // Question state
   const [questionFiles, setQuestionFiles] = useState([]);
@@ -20,6 +21,10 @@ function App() {
   const [answerOCRData, setAnswerOCRData] = useState(null);
   const [isAnswerLoading, setIsAnswerLoading] = useState(false);
   const [editedAnswerText, setEditedAnswerText] = useState(null);
+
+  // Evaluation state
+  const [evaluationData, setEvaluationData] = useState(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
 
   const [error, setError] = useState(null);
 
@@ -115,6 +120,52 @@ function App() {
     }
   };
 
+  // Handle evaluation
+  const handleEvaluate = async () => {
+    // Get the current question and answer text (edited or original)
+    const questionText = editedQuestionText !== null && editedQuestionText !== undefined
+      ? editedQuestionText
+      : (questionOCRData?.combined_text || '');
+    
+    const answerText = editedAnswerText !== null && editedAnswerText !== undefined
+      ? editedAnswerText
+      : (answerOCRData?.combined_text || '');
+
+    if (!questionText.trim()) {
+      setError('Please provide a question before evaluating.');
+      return;
+    }
+
+    if (!answerText.trim()) {
+      setError('Please provide an answer before evaluating.');
+      return;
+    }
+
+    try {
+      setIsEvaluating(true);
+      setError(null);
+      setEvaluationData(null);
+
+      const response = await evaluateAnswer(questionText, answerText);
+      
+      if (response.status_code === 200 && response.data) {
+        setEvaluationData(response);
+        setCurrentStep(3); // Navigate to evaluation step
+      } else {
+        throw new Error('Evaluation failed: Invalid response format');
+      }
+    } catch (err) {
+      console.error('Evaluation Error:', err);
+      const errorMessage = err.response?.data?.data?.detail || 
+                          err.response?.data?.message || 
+                          err.message || 
+                          'Failed to evaluate answer. Please check if the backend server is running at http://localhost:8000';
+      setError(errorMessage);
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
+
   // Navigation handlers
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -141,7 +192,7 @@ function App() {
         {/* Step Indicator */}
         <div className="step-indicator">
           <div className="step-indicator-container">
-            {[1, 2].map((step) => (
+            {[1, 2, 3].map((step) => (
               <div key={step} className="step-indicator-item">
                 <div
                   className={`step-circle ${currentStep === step ? 'active' : ''} ${currentStep > step ? 'completed' : ''}`}
@@ -149,7 +200,7 @@ function App() {
                   {currentStep > step ? '✓' : step}
                 </div>
                 <div className={`step-label ${currentStep === step ? 'active' : ''}`}>
-                  {step === 1 ? 'Question' : 'Answer'}
+                  {step === 1 ? 'Question' : step === 2 ? 'Answer' : 'Evaluation'}
                 </div>
                 {step < totalSteps && (
                   <div className={`step-connector ${currentStep > step ? 'completed' : ''}`}></div>
@@ -211,6 +262,40 @@ function App() {
                   onTextChange={setEditedAnswerText}
                 />
               )}
+              {/* Evaluate Button */}
+              {answerOCRData && questionOCRData && (
+                <div className="evaluate-button-container">
+                  <button
+                    type="button"
+                    className="evaluate-button"
+                    onClick={handleEvaluate}
+                    disabled={isEvaluating}
+                  >
+                    {isEvaluating ? '⏳ Evaluating...' : '📊 Evaluate Answer'}
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Step 3: Evaluation Section */}
+          {currentStep === 3 && (
+            <section className="upload-section evaluation-section">
+              <div className="section-divider">
+                <div className="section-number">3</div>
+                <div className="section-line"></div>
+              </div>
+              {evaluationData && (
+                <EvaluationResult
+                  data={evaluationData}
+                  isLoading={isEvaluating}
+                />
+              )}
+              {!evaluationData && (
+                <div className="no-evaluation-message">
+                  <p>No evaluation results available. Please go back to Step 2 and click "Evaluate Answer".</p>
+                </div>
+              )}
             </section>
           )}
 
@@ -239,14 +324,16 @@ function App() {
             >
               ← Previous
             </button>
-            <button
-              type="button"
-              className="nav-button next-button"
-              onClick={handleNext}
-              disabled={currentStep === totalSteps}
-            >
-              Next →
-            </button>
+            {currentStep < 3 && (
+              <button
+                type="button"
+                className="nav-button next-button"
+                onClick={handleNext}
+                disabled={currentStep === totalSteps}
+              >
+                Next →
+              </button>
+            )}
           </div>
         </main>
 

@@ -355,6 +355,58 @@ body {
   transform: none;
 }
 
+/* Evaluate Button */
+.evaluate-button-container {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.evaluate-button {
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(72, 187, 120, 0.3);
+  min-width: 250px;
+}
+
+.evaluate-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(72, 187, 120, 0.4);
+}
+
+.evaluate-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.evaluation-section {
+  padding-bottom: 1rem;
+}
+
+.no-evaluation-message {
+  padding: 2rem;
+  text-align: center;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  border: 2px dashed #cbd5e0;
+  color: #718096;
+}
+
+.no-evaluation-message p {
+  margin: 0;
+  font-size: 1rem;
+}
+
 @media (max-width: 768px) {
   .app-title {
     font-size: 2rem;
@@ -394,6 +446,11 @@ body {
   .nav-button {
     width: 100%;
     margin-left: 0;
+  }
+
+  .evaluate-button {
+    min-width: 100%;
+    font-size: 1rem;
   }
 }
 
