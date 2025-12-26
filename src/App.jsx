@@ -5,6 +5,10 @@ import { performQuestionOCR, performAnswerOCR } from './services/api';
 import './App.css';
 
 function App() {
+  // Step navigation state
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 2;
+
   // Question state
   const [questionFiles, setQuestionFiles] = useState([]);
   const [questionOCRData, setQuestionOCRData] = useState(null);
@@ -105,6 +109,21 @@ function App() {
     }
   };
 
+  // Navigation handlers
+  const handleNext = () => {
+    if (currentStep < totalSteps) {
+      setCurrentStep(currentStep + 1);
+      setError(null);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      setError(null);
+    }
+  };
+
   return (
     <div className="app">
       <div className="app-container">
@@ -113,52 +132,77 @@ function App() {
           <p className="app-subtitle">AI-Powered CA Learning Platform</p>
         </header>
 
-        <main className="app-main">
-          {/* Question Section */}
-          <section className="upload-section question-section">
-            <div className="section-divider">
-              <div className="section-number">1</div>
-              <div className="section-line"></div>
-            </div>
-            <MultiFileUpload
-              title="📝 Upload Question Images"
-              description="Upload handwritten question images (Maximum 2 files)"
-              maxFiles={2}
-              onFilesSelect={handleQuestionFilesSelect}
-              onProcessOCR={handleQuestionOCR}
-              isLoading={isQuestionLoading}
-            />
-            {questionOCRData && (
-              <OCRResultsDisplay
-                data={questionOCRData}
-                isLoading={isQuestionLoading}
-                type="Question"
-              />
-            )}
-          </section>
+        {/* Step Indicator */}
+        <div className="step-indicator">
+          <div className="step-indicator-container">
+            {[1, 2].map((step) => (
+              <div key={step} className="step-indicator-item">
+                <div
+                  className={`step-circle ${currentStep === step ? 'active' : ''} ${currentStep > step ? 'completed' : ''}`}
+                >
+                  {currentStep > step ? '✓' : step}
+                </div>
+                <div className={`step-label ${currentStep === step ? 'active' : ''}`}>
+                  {step === 1 ? 'Question' : 'Answer'}
+                </div>
+                {step < totalSteps && (
+                  <div className={`step-connector ${currentStep > step ? 'completed' : ''}`}></div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-          {/* Answer Section */}
-          <section className="upload-section answer-section">
-            <div className="section-divider">
-              <div className="section-number">2</div>
-              <div className="section-line"></div>
-            </div>
-            <MultiFileUpload
-              title="💡 Upload Answer Images"
-              description="Upload handwritten answer images (Maximum 5 files)"
-              maxFiles={5}
-              onFilesSelect={handleAnswerFilesSelect}
-              onProcessOCR={handleAnswerOCR}
-              isLoading={isAnswerLoading}
-            />
-            {answerOCRData && (
-              <OCRResultsDisplay
-                data={answerOCRData}
-                isLoading={isAnswerLoading}
-                type="Answer"
+        <main className="app-main">
+          {/* Step 1: Question Section */}
+          {currentStep === 1 && (
+            <section className="upload-section question-section">
+              <div className="section-divider">
+                <div className="section-number">1</div>
+                <div className="section-line"></div>
+              </div>
+              <MultiFileUpload
+                title="📝 Upload Question Images"
+                description="Upload handwritten question images (Maximum 2 files)"
+                maxFiles={2}
+                onFilesSelect={handleQuestionFilesSelect}
+                onProcessOCR={handleQuestionOCR}
+                isLoading={isQuestionLoading}
               />
-            )}
-          </section>
+              {questionOCRData && (
+                <OCRResultsDisplay
+                  data={questionOCRData}
+                  isLoading={isQuestionLoading}
+                  type="Question"
+                />
+              )}
+            </section>
+          )}
+
+          {/* Step 2: Answer Section */}
+          {currentStep === 2 && (
+            <section className="upload-section answer-section">
+              <div className="section-divider">
+                <div className="section-number">2</div>
+                <div className="section-line"></div>
+              </div>
+              <MultiFileUpload
+                title="💡 Upload Answer Images"
+                description="Upload handwritten answer images (Maximum 5 files)"
+                maxFiles={5}
+                onFilesSelect={handleAnswerFilesSelect}
+                onProcessOCR={handleAnswerOCR}
+                isLoading={isAnswerLoading}
+              />
+              {answerOCRData && (
+                <OCRResultsDisplay
+                  data={answerOCRData}
+                  isLoading={isAnswerLoading}
+                  type="Answer"
+                />
+              )}
+            </section>
+          )}
 
           {/* Error Display */}
           {error && (
@@ -174,6 +218,26 @@ function App() {
               </button>
             </div>
           )}
+
+          {/* Navigation Buttons */}
+          <div className="step-navigation">
+            <button
+              type="button"
+              className="nav-button prev-button"
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+            >
+              ← Previous
+            </button>
+            <button
+              type="button"
+              className="nav-button next-button"
+              onClick={handleNext}
+              disabled={currentStep === totalSteps}
+            >
+              Next →
+            </button>
+          </div>
         </main>
 
         <footer className="app-footer">
