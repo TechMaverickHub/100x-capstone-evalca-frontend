@@ -149,6 +149,11 @@
   color: #c53030;
 }
 
+.missing-points-text {
+  color: #c53030;
+  margin: 0;
+}
+
 .examiner-remarks {
   font-style: italic;
   color: #2d3748;

@@ -89,19 +89,22 @@ const EvaluationResult = ({ data, isLoading }) => {
       )}
 
       {/* Missing or Incorrect Points */}
-      {evaluationData.missing_or_incorrect_points && 
-       evaluationData.missing_or_incorrect_points.length > 0 && (
+      {evaluationData.missing_or_incorrect_points && (
         <div className="evaluation-section">
           <h4 className="section-title">
             <span className="section-icon">⚠️</span>
             Missing or Incorrect Points
           </h4>
           <div className="section-content">
-            <ul className="points-list missing-points">
-              {evaluationData.missing_or_incorrect_points.map((point, index) => (
-                <li key={index}>{point}</li>
-              ))}
-            </ul>
+            {Array.isArray(evaluationData.missing_or_incorrect_points) ? (
+              <ul className="points-list missing-points">
+                {evaluationData.missing_or_incorrect_points.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="missing-points-text">{evaluationData.missing_or_incorrect_points}</p>
+            )}
           </div>
         </div>
       )}
