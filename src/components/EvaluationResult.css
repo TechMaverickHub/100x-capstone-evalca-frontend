@@ -32,11 +32,11 @@
   flex: 1;
   min-width: 200px;
   padding: 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   border-radius: 12px;
   text-align: center;
   color: white;
-  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
 }
 
 .score-label {
@@ -108,7 +108,7 @@
   padding: 1.25rem;
   background-color: #f7fafc;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #2563eb;
 }
 
 .section-title {

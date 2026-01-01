@@ -10,7 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   min-height: 100vh;
 }
 
@@ -32,7 +32,7 @@ body {
 }
 
 .app-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
   color: white;
   padding: 2rem;
   text-align: center;
@@ -79,7 +79,7 @@ body {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -92,7 +92,7 @@ body {
 .section-line {
   flex: 1;
   height: 3px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
   border-radius: 2px;
 }
 
@@ -139,7 +139,7 @@ body {
 
 .process-ocr-button {
   padding: 1.25rem 2.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -147,13 +147,13 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
   min-width: 250px;
 }
 
 .process-ocr-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
 }
 
 .process-ocr-button:disabled {
@@ -261,11 +261,11 @@ body {
 }
 
 .step-circle.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
-  border-color: #667eea;
+  border-color: #2563eb;
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
 .step-circle.completed {
@@ -283,7 +283,7 @@ body {
 }
 
 .step-label.active {
-  color: #667eea;
+  color: #2563eb;
   font-weight: 600;
 }
 
@@ -339,14 +339,14 @@ body {
 }
 
 .next-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   color: white;
   margin-left: auto;
 }
 
 .next-button:hover:not(:disabled) {
   transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
 .next-button:disabled {

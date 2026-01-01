@@ -127,14 +127,14 @@
 }
 
 .edit-text-button {
-  background-color: #4299e1;
+  background-color: #2563eb;
   color: white;
 }
 
 .edit-text-button:hover {
-  background-color: #3182ce;
+  background-color: #1e40af;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
 }
 
 .save-text-button {
@@ -173,7 +173,7 @@
   line-height: 1.6;
   color: #2d3748;
   background-color: #ffffff;
-  border: 2px solid #4299e1;
+  border: 2px solid #2563eb;
   border-radius: 8px;
   resize: vertical;
   outline: none;
@@ -181,8 +181,8 @@
 }
 
 .editable-text:focus {
-  border-color: #3182ce;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .extracted-text {
