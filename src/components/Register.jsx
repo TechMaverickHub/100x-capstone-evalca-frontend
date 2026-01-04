@@ -176,3 +176,4 @@ const Register = ({ onSwitchToLogin }) => {
 
 export default Register;
 
+
