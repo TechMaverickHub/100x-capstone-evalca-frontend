@@ -2,11 +2,15 @@ import { useState } from 'react';
 import MultiFileUpload from '../components/MultiFileUpload';
 import OCRResultsDisplay from '../components/OCRResultsDisplay';
 import EvaluationResult from '../components/EvaluationResult';
+import DirectTextInput from '../components/DirectTextInput';
 import { performQuestionOCR, performAnswerOCR, evaluateAnswer } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import '../App.css';
 
 function TeacherDashboard() {
+  // Input mode: 'upload' or 'type'
+  const [inputMode, setInputMode] = useState('upload');
+
   // Step navigation state
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
@@ -16,12 +20,14 @@ function TeacherDashboard() {
   const [questionOCRData, setQuestionOCRData] = useState(null);
   const [isQuestionLoading, setIsQuestionLoading] = useState(false);
   const [editedQuestionText, setEditedQuestionText] = useState(null);
+  const [directQuestionText, setDirectQuestionText] = useState('');
 
   // Answer state
   const [answerFiles, setAnswerFiles] = useState([]);
   const [answerOCRData, setAnswerOCRData] = useState(null);
   const [isAnswerLoading, setIsAnswerLoading] = useState(false);
   const [editedAnswerText, setEditedAnswerText] = useState(null);
+  const [directAnswerText, setDirectAnswerText] = useState('');
 
   // Evaluation state
   const [evaluationData, setEvaluationData] = useState(null);
@@ -122,16 +128,44 @@ function TeacherDashboard() {
     }
   };
 
+  // Handle mode change
+  const handleModeChange = (mode) => {
+    setInputMode(mode);
+    // Reset states when switching modes
+    setCurrentStep(1);
+    setError(null);
+    if (mode === 'type') {
+      setDirectQuestionText('');
+      setDirectAnswerText('');
+    } else {
+      setQuestionFiles([]);
+      setAnswerFiles([]);
+      setQuestionOCRData(null);
+      setAnswerOCRData(null);
+      setEditedQuestionText(null);
+      setEditedAnswerText(null);
+    }
+  };
+
   // Handle evaluation
   const handleEvaluate = async () => {
-    // Get the current question and answer text (edited or original)
-    const questionText = editedQuestionText !== null && editedQuestionText !== undefined
-      ? editedQuestionText
-      : (questionOCRData?.combined_text || '');
-    
-    const answerText = editedAnswerText !== null && editedAnswerText !== undefined
-      ? editedAnswerText
-      : (answerOCRData?.combined_text || '');
+    let questionText = '';
+    let answerText = '';
+
+    if (inputMode === 'type') {
+      // Direct text input mode
+      questionText = directQuestionText.trim();
+      answerText = directAnswerText.trim();
+    } else {
+      // Upload/OCR mode - Get the current question and answer text (edited or original)
+      questionText = editedQuestionText !== null && editedQuestionText !== undefined
+        ? editedQuestionText
+        : (questionOCRData?.combined_text || '');
+      
+      answerText = editedAnswerText !== null && editedAnswerText !== undefined
+        ? editedAnswerText
+        : (answerOCRData?.combined_text || '');
+    }
 
     if (!questionText.trim()) {
       setError('Please provide a question before evaluating.');
@@ -201,6 +235,26 @@ function TeacherDashboard() {
           </div>
         </header>
 
+        {/* Mode Toggle */}
+        <div className="mode-toggle-container">
+          <div className="mode-toggle">
+            <button
+              type="button"
+              className={`mode-button ${inputMode === 'upload' ? 'active' : ''}`}
+              onClick={() => handleModeChange('upload')}
+            >
+              📷 Upload Images
+            </button>
+            <button
+              type="button"
+              className={`mode-button ${inputMode === 'type' ? 'active' : ''}`}
+              onClick={() => handleModeChange('type')}
+            >
+              ⌨️ Type Directly
+            </button>
+          </div>
+        </div>
+
         {/* Step Indicator */}
         <div className="step-indicator">
           <div className="step-indicator-container">
@@ -230,21 +284,33 @@ function TeacherDashboard() {
                 <div className="section-number">1</div>
                 <div className="section-line"></div>
               </div>
-              <MultiFileUpload
-                title="📝 Upload Question Images"
-                description="Upload handwritten question images (Maximum 2 files)"
-                maxFiles={2}
-                onFilesSelect={handleQuestionFilesSelect}
-                onProcessOCR={handleQuestionOCR}
-                isLoading={isQuestionLoading}
-              />
-              {questionOCRData && (
-                <OCRResultsDisplay
-                  data={questionOCRData}
-                  isLoading={isQuestionLoading}
-                  type="Question"
-                  editedText={editedQuestionText}
-                  onTextChange={setEditedQuestionText}
+              {inputMode === 'upload' ? (
+                <>
+                  <MultiFileUpload
+                    title="📝 Upload Question Images"
+                    description="Upload handwritten question images (Maximum 2 files)"
+                    maxFiles={2}
+                    onFilesSelect={handleQuestionFilesSelect}
+                    onProcessOCR={handleQuestionOCR}
+                    isLoading={isQuestionLoading}
+                  />
+                  {questionOCRData && (
+                    <OCRResultsDisplay
+                      data={questionOCRData}
+                      isLoading={isQuestionLoading}
+                      type="Question"
+                      editedText={editedQuestionText}
+                      onTextChange={setEditedQuestionText}
+                    />
+                  )}
+                </>
+              ) : (
+                <DirectTextInput
+                  title="📝 Type Question"
+                  description="Enter the question text directly"
+                  value={directQuestionText}
+                  onChange={setDirectQuestionText}
+                  placeholder="Enter the question here..."
                 />
               )}
             </section>
@@ -257,35 +323,62 @@ function TeacherDashboard() {
                 <div className="section-number">2</div>
                 <div className="section-line"></div>
               </div>
-              <MultiFileUpload
-                title="💡 Upload Answer Images"
-                description="Upload handwritten answer images (Maximum 5 files)"
-                maxFiles={5}
-                onFilesSelect={handleAnswerFilesSelect}
-                onProcessOCR={handleAnswerOCR}
-                isLoading={isAnswerLoading}
-              />
-              {answerOCRData && (
-                <OCRResultsDisplay
-                  data={answerOCRData}
-                  isLoading={isAnswerLoading}
-                  type="Answer"
-                  editedText={editedAnswerText}
-                  onTextChange={setEditedAnswerText}
-                />
-              )}
-              {/* Evaluate Button */}
-              {answerOCRData && questionOCRData && (
-                <div className="evaluate-button-container">
-                  <button
-                    type="button"
-                    className="evaluate-button"
-                    onClick={handleEvaluate}
-                    disabled={isEvaluating}
-                  >
-                    {isEvaluating ? '⏳ Evaluating...' : '📊 Evaluate Answer'}
-                  </button>
-                </div>
+              {inputMode === 'upload' ? (
+                <>
+                  <MultiFileUpload
+                    title="💡 Upload Answer Images"
+                    description="Upload handwritten answer images (Maximum 5 files)"
+                    maxFiles={5}
+                    onFilesSelect={handleAnswerFilesSelect}
+                    onProcessOCR={handleAnswerOCR}
+                    isLoading={isAnswerLoading}
+                  />
+                  {answerOCRData && (
+                    <OCRResultsDisplay
+                      data={answerOCRData}
+                      isLoading={isAnswerLoading}
+                      type="Answer"
+                      editedText={editedAnswerText}
+                      onTextChange={setEditedAnswerText}
+                    />
+                  )}
+                  {/* Evaluate Button - Upload Mode */}
+                  {answerOCRData && questionOCRData && (
+                    <div className="evaluate-button-container">
+                      <button
+                        type="button"
+                        className="evaluate-button"
+                        onClick={handleEvaluate}
+                        disabled={isEvaluating}
+                      >
+                        {isEvaluating ? '⏳ Evaluating...' : '📊 Evaluate Answer'}
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <DirectTextInput
+                    title="💡 Type Answer"
+                    description="Enter the answer text directly"
+                    value={directAnswerText}
+                    onChange={setDirectAnswerText}
+                    placeholder="Enter the answer here..."
+                  />
+                  {/* Evaluate Button - Direct Type Mode */}
+                  {directQuestionText.trim() && directAnswerText.trim() && (
+                    <div className="evaluate-button-container">
+                      <button
+                        type="button"
+                        className="evaluate-button"
+                        onClick={handleEvaluate}
+                        disabled={isEvaluating}
+                      >
+                        {isEvaluating ? '⏳ Evaluating...' : '📊 Evaluate Answer'}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </section>
           )}

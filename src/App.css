@@ -303,6 +303,47 @@ body {
   font-size: 0.875rem;
 }
 
+/* Mode Toggle */
+.mode-toggle-container {
+  padding: 1.5rem 2rem;
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.mode-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.mode-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-button:hover {
+  border-color: #cbd5e0;
+  background-color: #f7fafc;
+}
+
+.mode-button.active {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  color: white;
+  border-color: #2563eb;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+.mode-button.active:hover {
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.4);
+}
+
 /* Step Indicator */
 .step-indicator {
   padding: 2rem 2rem 1rem;
@@ -550,6 +591,19 @@ body {
   .logout-button {
     padding: 0.5rem 1rem;
     font-size: 0.875rem;
+  }
+
+  .mode-toggle-container {
+    padding: 1rem;
+  }
+
+  .mode-toggle {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .mode-button {
+    width: 100%;
   }
 }
 
