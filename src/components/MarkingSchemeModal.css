@@ -91,6 +91,51 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+.total-marks-input-group {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.total-marks-input-group .form-input {
+  flex: 1;
+}
+
+.generate-scheme-button {
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.generate-scheme-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.generate-scheme-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-message-text {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #991b1b;
+  font-size: 0.875rem;
+}
+
 .scheme-points-section {
   margin-top: 2rem;
 }
@@ -261,6 +306,14 @@
 
   .cancel-button,
   .submit-button {
+    width: 100%;
+  }
+
+  .total-marks-input-group {
+    flex-direction: column;
+  }
+
+  .generate-scheme-button {
     width: 100%;
   }
 }

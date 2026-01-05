@@ -139,6 +139,67 @@
 }
 
 /* Marking Breakdown */
+.breakdown-reference {
+  background-color: #ebf8ff;
+  border: 1px solid #90cdf4;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.reference-title {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #2c5282;
+}
+
+.reference-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reference-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.reference-notation {
+  font-weight: 600;
+  color: #2c5282;
+  font-family: 'Courier New', monospace;
+  min-width: 50px;
+}
+
+.reference-arrow {
+  color: #4299e1;
+  font-weight: 600;
+}
+
+.reference-meaning {
+  color: #2d3748;
+}
+
+.status-indicator {
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+.status-indicator.attempted {
+  color: #065f46;
+}
+
+.status-indicator.not-awarded {
+  color: #92400e;
+}
+
+.status-indicator.not-attempted {
+  color: #991b1b;
+}
+
 .breakdown-list {
   display: flex;
   flex-direction: column;
@@ -150,15 +211,39 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 1rem;
+  transition: all 0.2s;
+}
+
+.breakdown-item.status-attempted {
+  border-left: 4px solid #48bb78;
+  background-color: #f0fdf4;
+}
+
+.breakdown-item.status-not-awarded {
+  border-left: 4px solid #f59e0b;
+  background-color: #fffbeb;
+}
+
+.breakdown-item.status-not-attempted {
+  border-left: 4px solid #ef4444;
+  background-color: #fef2f2;
 }
 
 .breakdown-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 0.75rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid #e2e8f0;
+  gap: 1rem;
+}
+
+.breakdown-point-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 .breakdown-point-code {
@@ -167,10 +252,45 @@
   font-size: 0.9375rem;
 }
 
+.breakdown-point-code.no-match {
+  color: #f59e0b;
+  font-style: italic;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.status-attempted {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.status-not-awarded {
+  background-color: #fed7aa;
+  color: #92400e;
+}
+
+.status-badge.status-not-attempted {
+  background-color: #fecaca;
+  color: #991b1b;
+}
+
 .breakdown-marks {
   font-weight: 600;
   color: #48bb78;
   font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+.breakdown-marks.marks-not-attempted {
+  color: #ef4444;
 }
 
 .breakdown-student-point {
@@ -178,6 +298,11 @@
   color: #4a5568;
   line-height: 1.6;
   font-size: 0.9375rem;
+}
+
+.breakdown-student-point.not-attempted-text {
+  color: #991b1b;
+  font-style: italic;
 }
 
 .points-list {
@@ -260,6 +385,18 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .breakdown-marks {
+    align-self: flex-start;
+  }
+
+  .reference-items {
+    gap: 0.75rem;
+  }
+
+  .reference-item {
+    flex-wrap: wrap;
   }
 }
 

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { generateMarkingScheme } from '../services/api';
 import './MarkingSchemeModal.css';
 
 const MarkingSchemeModal = ({ isOpen, onClose, onSubmit, question, answer }) => {
@@ -6,6 +7,15 @@ const MarkingSchemeModal = ({ isOpen, onClose, onSubmit, question, answer }) => 
   const [schemePoints, setSchemePoints] = useState([
     { point_code: '', description: '', max_marks: 0 },
   ]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generateError, setGenerateError] = useState(null);
+
+  // Reset error when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setGenerateError(null);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -23,6 +33,50 @@ const MarkingSchemeModal = ({ isOpen, onClose, onSubmit, question, answer }) => 
     const updated = [...schemePoints];
     updated[index] = { ...updated[index], [field]: value };
     setSchemePoints(updated);
+  };
+
+  const handleGenerateScheme = async () => {
+    if (!question || !question.trim()) {
+      alert('Please provide a question first to generate marking scheme.');
+      return;
+    }
+
+    if (!totalMarks || parseFloat(totalMarks) <= 0) {
+      alert('Please enter a valid total marks value.');
+      return;
+    }
+
+    try {
+      setIsGenerating(true);
+      setGenerateError(null);
+
+      const response = await generateMarkingScheme(question.trim(), parseFloat(totalMarks));
+      
+      if (response.status_code === 200 && response.data && response.data.scheme) {
+        // Update total marks if provided in response
+        if (response.data.total_marks) {
+          setTotalMarks(response.data.total_marks);
+        }
+        
+        // Populate scheme points with generated data
+        setSchemePoints(response.data.scheme.map(point => ({
+          point_code: point.point_code || '',
+          description: point.description || '',
+          max_marks: point.max_marks || 0,
+        })));
+      } else {
+        throw new Error('Failed to generate marking scheme: Invalid response format');
+      }
+    } catch (err) {
+      console.error('Generate Marking Scheme Error:', err);
+      const errorMessage = err.response?.data?.data?.detail || 
+                          err.response?.data?.message || 
+                          err.message || 
+                          'Failed to generate marking scheme. Please try again.';
+      setGenerateError(errorMessage);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -64,14 +118,27 @@ const MarkingSchemeModal = ({ isOpen, onClose, onSubmit, question, answer }) => 
             <label className="form-label">
               Total Marks
             </label>
-            <input
-              type="number"
-              className="form-input"
-              value={totalMarks}
-              onChange={(e) => setTotalMarks(e.target.value)}
-              min="1"
-              required
-            />
+            <div className="total-marks-input-group">
+              <input
+                type="number"
+                className="form-input"
+                value={totalMarks}
+                onChange={(e) => setTotalMarks(e.target.value)}
+                min="1"
+                required
+              />
+              <button
+                type="button"
+                className="generate-scheme-button"
+                onClick={handleGenerateScheme}
+                disabled={isGenerating || !question || !question.trim()}
+              >
+                {isGenerating ? '⏳ Generating...' : '✨ Generate Marking Scheme'}
+              </button>
+            </div>
+            {generateError && (
+              <div className="error-message-text">{generateError}</div>
+            )}
           </div>
 
           <div className="scheme-points-section">

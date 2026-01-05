@@ -187,3 +187,25 @@ export const evaluateAnswerExperimental = async (question, answer, totalMarks, m
   return response.data;
 };
 
+/**
+ * Generate marking scheme from question and total marks
+ * @param {string} question - Question text
+ * @param {number} totalMarks - Total marks for the question
+ * @returns {Promise} Generated marking scheme response
+ */
+export const generateMarkingScheme = async (question, totalMarks) => {
+  const token = getAuthToken();
+
+  const response = await api.post(API_ENDPOINTS.GENERATE_MARKING_SCHEME_URL, {
+    question: question,
+    total_marks: totalMarks,
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
