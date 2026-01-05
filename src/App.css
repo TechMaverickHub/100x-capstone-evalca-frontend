@@ -484,8 +484,10 @@ body {
   margin-top: 2rem;
   display: flex;
   justify-content: center;
+  gap: 1rem;
   padding-top: 1.5rem;
   border-top: 2px solid #e2e8f0;
+  flex-wrap: wrap;
 }
 
 .evaluate-button {
@@ -515,6 +517,31 @@ body {
 
 .evaluation-section {
   padding-bottom: 1rem;
+}
+
+.experimental-eval-button {
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(139, 92, 246, 0.3);
+  min-width: 250px;
+}
+
+.experimental-eval-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4);
+}
+
+.experimental-eval-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .no-evaluation-message {
@@ -572,9 +599,14 @@ body {
     margin-left: 0;
   }
 
-  .evaluate-button {
+  .evaluate-button,
+  .experimental-eval-button {
     min-width: 100%;
     font-size: 1rem;
+  }
+
+  .evaluate-button-container {
+    flex-direction: column;
   }
 
   .header-content {

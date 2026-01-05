@@ -2,8 +2,10 @@ import { useState } from 'react';
 import MultiFileUpload from '../components/MultiFileUpload';
 import OCRResultsDisplay from '../components/OCRResultsDisplay';
 import EvaluationResult from '../components/EvaluationResult';
+import ExperimentalEvaluationResult from '../components/ExperimentalEvaluationResult';
 import DirectTextInput from '../components/DirectTextInput';
-import { performQuestionOCR, performAnswerOCR, evaluateAnswer } from '../services/api';
+import MarkingSchemeModal from '../components/MarkingSchemeModal';
+import { performQuestionOCR, performAnswerOCR, evaluateAnswer, evaluateAnswerExperimental } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import '../App.css';
 
@@ -32,6 +34,9 @@ function TeacherDashboard() {
   // Evaluation state
   const [evaluationData, setEvaluationData] = useState(null);
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [experimentalEvaluationData, setExperimentalEvaluationData] = useState(null);
+  const [isExperimentalEvaluating, setIsExperimentalEvaluating] = useState(false);
+  const [showMarkingSchemeModal, setShowMarkingSchemeModal] = useState(false);
 
   const [error, setError] = useState(null);
   const { user, logout } = useAuth();
@@ -134,6 +139,8 @@ function TeacherDashboard() {
     // Reset states when switching modes
     setCurrentStep(1);
     setError(null);
+    setEvaluationData(null);
+    setExperimentalEvaluationData(null);
     if (mode === 'type') {
       setDirectQuestionText('');
       setDirectAnswerText('');
@@ -144,6 +151,68 @@ function TeacherDashboard() {
       setAnswerOCRData(null);
       setEditedQuestionText(null);
       setEditedAnswerText(null);
+    }
+  };
+
+  // Handle experimental evaluation
+  const handleExperimentalEvaluate = async (markingSchemeData) => {
+    let questionText = '';
+    let answerText = '';
+
+    if (inputMode === 'type') {
+      questionText = directQuestionText.trim();
+      answerText = directAnswerText.trim();
+    } else {
+      questionText = editedQuestionText !== null && editedQuestionText !== undefined
+        ? editedQuestionText
+        : (questionOCRData?.combined_text || '');
+      
+      answerText = editedAnswerText !== null && editedAnswerText !== undefined
+        ? editedAnswerText
+        : (answerOCRData?.combined_text || '');
+    }
+
+    if (!questionText.trim()) {
+      setError('Please provide a question before evaluating.');
+      setShowMarkingSchemeModal(false);
+      return;
+    }
+
+    if (!answerText.trim()) {
+      setError('Please provide an answer before evaluating.');
+      setShowMarkingSchemeModal(false);
+      return;
+    }
+
+    try {
+      setIsExperimentalEvaluating(true);
+      setError(null);
+      setExperimentalEvaluationData(null);
+      setEvaluationData(null); // Clear standard evaluation data when running experimental evaluation
+      setShowMarkingSchemeModal(false);
+
+      const response = await evaluateAnswerExperimental(
+        questionText,
+        answerText,
+        markingSchemeData.totalMarks,
+        markingSchemeData.markingScheme
+      );
+      
+      if (response.status_code === 200 && response.data) {
+        setExperimentalEvaluationData(response);
+        setCurrentStep(3); // Navigate to evaluation step
+      } else {
+        throw new Error('Experimental evaluation failed: Invalid response format');
+      }
+    } catch (err) {
+      console.error('Experimental Evaluation Error:', err);
+      const errorMessage = err.response?.data?.data?.detail || 
+                          err.response?.data?.message || 
+                          err.message || 
+                          'Failed to evaluate answer. Please check if the backend server is running at http://localhost:8000';
+      setError(errorMessage);
+    } finally {
+      setIsExperimentalEvaluating(false);
     }
   };
 
@@ -181,6 +250,7 @@ function TeacherDashboard() {
       setIsEvaluating(true);
       setError(null);
       setEvaluationData(null);
+      setExperimentalEvaluationData(null); // Clear experimental data when running standard evaluation
 
       const response = await evaluateAnswer(questionText, answerText);
       
@@ -342,16 +412,24 @@ function TeacherDashboard() {
                       onTextChange={setEditedAnswerText}
                     />
                   )}
-                  {/* Evaluate Button - Upload Mode */}
+                  {/* Evaluate Buttons - Upload Mode */}
                   {answerOCRData && questionOCRData && (
                     <div className="evaluate-button-container">
                       <button
                         type="button"
                         className="evaluate-button"
                         onClick={handleEvaluate}
-                        disabled={isEvaluating}
+                        disabled={isEvaluating || isExperimentalEvaluating}
                       >
                         {isEvaluating ? '⏳ Evaluating...' : '📊 Evaluate Answer'}
+                      </button>
+                      <button
+                        type="button"
+                        className="experimental-eval-button"
+                        onClick={() => setShowMarkingSchemeModal(true)}
+                        disabled={isEvaluating || isExperimentalEvaluating}
+                      >
+                        {isExperimentalEvaluating ? '⏳ Evaluating...' : '🧪 Experimental Evaluate'}
                       </button>
                     </div>
                   )}
@@ -365,16 +443,24 @@ function TeacherDashboard() {
                     onChange={setDirectAnswerText}
                     placeholder="Enter the answer here..."
                   />
-                  {/* Evaluate Button - Direct Type Mode */}
+                  {/* Evaluate Buttons - Direct Type Mode */}
                   {directQuestionText.trim() && directAnswerText.trim() && (
                     <div className="evaluate-button-container">
                       <button
                         type="button"
                         className="evaluate-button"
                         onClick={handleEvaluate}
-                        disabled={isEvaluating}
+                        disabled={isEvaluating || isExperimentalEvaluating}
                       >
                         {isEvaluating ? '⏳ Evaluating...' : '📊 Evaluate Answer'}
+                      </button>
+                      <button
+                        type="button"
+                        className="experimental-eval-button"
+                        onClick={() => setShowMarkingSchemeModal(true)}
+                        disabled={isEvaluating || isExperimentalEvaluating}
+                      >
+                        {isExperimentalEvaluating ? '⏳ Evaluating...' : '🧪 Experimental Evaluate'}
                       </button>
                     </div>
                   )}
@@ -390,19 +476,40 @@ function TeacherDashboard() {
                 <div className="section-number">3</div>
                 <div className="section-line"></div>
               </div>
-              {evaluationData && (
+
+              {/* Standard Evaluation Results */}
+              {evaluationData && !experimentalEvaluationData && (
                 <EvaluationResult
                   data={evaluationData}
                   isLoading={isEvaluating}
                 />
               )}
-              {!evaluationData && (
+
+              {/* Experimental Evaluation Results */}
+              {experimentalEvaluationData && (
+                <ExperimentalEvaluationResult
+                  data={experimentalEvaluationData}
+                  isLoading={isExperimentalEvaluating}
+                />
+              )}
+
+              {/* No Results Message */}
+              {!evaluationData && !experimentalEvaluationData && (
                 <div className="no-evaluation-message">
-                  <p>No evaluation results available. Please go back to Step 2 and click "Evaluate Answer".</p>
+                  <p>No evaluation results available. Please go back to Step 2 and click "Evaluate Answer" or "Experimental Evaluate".</p>
                 </div>
               )}
             </section>
           )}
+
+          {/* Marking Scheme Modal */}
+          <MarkingSchemeModal
+            isOpen={showMarkingSchemeModal}
+            onClose={() => setShowMarkingSchemeModal(false)}
+            onSubmit={handleExperimentalEvaluate}
+            question={inputMode === 'type' ? directQuestionText : (editedQuestionText || questionOCRData?.combined_text || '')}
+            answer={inputMode === 'type' ? directAnswerText : (editedAnswerText || answerOCRData?.combined_text || '')}
+          />
 
           {/* Error Display */}
           {error && (

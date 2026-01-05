@@ -159,3 +159,31 @@ export const loginUser = async (email, password) => {
   return response.data;
 };
 
+/**
+ * Evaluate question and answer with experimental marking scheme
+ * @param {string} question - Question text
+ * @param {string} answer - Answer text
+ * @param {number} totalMarks - Total marks for the question
+ * @param {Array} markingScheme - Array of marking scheme points
+ * @returns {Promise} Experimental evaluation response with marking breakdown
+ */
+export const evaluateAnswerExperimental = async (question, answer, totalMarks, markingScheme) => {
+  const token = getAuthToken();
+
+  const response = await api.post(API_ENDPOINTS.EVALUATE_EXPERIMENTAL_URL, {
+    question: question,
+    answer: answer,
+    marking_scheme: {
+      total_marks: totalMarks,
+      scheme: markingScheme,
+    },
+  }, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+

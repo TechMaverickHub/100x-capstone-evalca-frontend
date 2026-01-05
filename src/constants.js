@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   OCR_QUESTION_URL: '/ocr/ocr-question',
   OCR_ANSWER_URL: '/ocr/ocr-answer',
   EVALUATE_URL: '/evaluate/evaluate',
+  EVALUATE_EXPERIMENTAL_URL: '/evaluate/evaluate-experimental',
 };
 
 // User Roles
